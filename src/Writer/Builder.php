@@ -563,7 +563,7 @@ class Builder
      */
     protected function tempFilename()
     {
-//        $tempDir           = !empty($this->tempDir) ? $this->tempDir : sys_get_temp_dir();
+        $tempDir           = !empty($this->tempDir) ? $this->tempDir : sys_get_temp_dir();
         $tempDir = __DIR__ . '/../../data/';
         $filename = tempnam($tempDir, "xlsx_writer_");
         $this->tempFiles[] = $filename;
