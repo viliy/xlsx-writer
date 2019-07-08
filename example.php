@@ -15,8 +15,8 @@ try {
 //    $writer = new XlsxWriter();
 
     $fileName = __DIR__ . '/data/xlsx_writer' . date('Ymd-His') . '.xlsx';
-    $writer->buildHeader('非服装', otherHead());
-    $writer->buildHeader('服装', clothingHead());
+    $writer->buildHeader('sheet_name_1', otherHead());
+    $writer->buildHeader('sheet_name_2', clothingHead());
 
     foreach (rows() as $row) {
         $writer->writeSheetRow($row[0], $row[1]);
