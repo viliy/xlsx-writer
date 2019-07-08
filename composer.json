@@ -1,0 +1,23 @@
+{
+  "name": "zhaqq/xlsx",
+  "description": "PHP Library to write XLSX files",
+  "keywords": [
+    "PHP_XLSXWriter",
+    "php",
+    "library",
+    "xls",
+    "xlsx",
+    "excel"
+  ],
+  "type": "project",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Zhaqq\\Xlsx\\": "src"
+    }
+  },
+  "require": {
+    "php": ">=7.1",
+    "ext-zip": "*"
+  }
+}
