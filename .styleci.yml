@@ -3,7 +3,6 @@ preset: symfony
 risky: false
 
 enabled:
-    - single_quote
     - no_unused_imports
     - no_singleline_whitespace_before_semicolons
     - self_accessor
