@@ -11,4 +11,4 @@ before_install:
 script: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 after_script:
   - if [ $(phpenv version-name) = "7.3" ]; then wget https://scrutinizer-ci.com/ocular.phar fi
-  - if [ $(phpenv version-name) = "7.3" ]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover fi
+  - if [ $(phpenv version-name) = "7.3" ]; then php ocular.phar code-coverage:upload  --access-token="f8ae6ce0df62b4b0b82cbf83b47429739567d4ba" --format=php-clover coverage.clover fi
