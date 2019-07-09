@@ -1,6 +1,6 @@
 preset: psr2
 
-linting: true
+risky: false
 
 enabled:
   - strict
@@ -9,18 +9,7 @@ enabled:
 
 finder:
   exclude:
-    - "tests"
+    - "test"
+    - "src"
   name:
     - "*.php"
-  not-name:
-    - "*Stub.php"
-  contains:
-    - "Foo"
-  not-contains:
-    - "config"
-  path:
-    - "foo/Stuff"
-  not-path:
-    - "libraries"
-  depth:
-    - "< 3"

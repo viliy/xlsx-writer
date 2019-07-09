@@ -1,12 +1,12 @@
 <phpunit colors="true" bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="Xlsx">
-            <directory>test</directory>
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">test</directory>
+            <directory suffix=".php">tests</directory>
         </whitelist>
     </filter>
 </phpunit>
