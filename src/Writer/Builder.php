@@ -6,6 +6,7 @@
 
 namespace Zhaqq\Xlsx\Writer;
 
+use Zhaqq\Exception\XlsxException;
 use Zhaqq\Xlsx\Support;
 
 /**
@@ -68,6 +69,8 @@ class Builder
      * @var array
      */
     protected $keywords = [];
+
+    protected $tempDir;
 
     /**
      * XlsxWriter constructor.
@@ -155,15 +158,15 @@ class Builder
             if (is_writable($filename)) {
                 @unlink($filename); //if the zip already exists, remove it
             } else {
-                throw new XlsxException('Error in '.__CLASS__.'::'.__FUNCTION__.', file is not writeable.');
+                throw new XlsxException('Error in ' . __CLASS__ . '::' . __FUNCTION__ . ', file is not writeable.');
             }
         }
         $zip = new \ZipArchive();
         if (empty($this->sheets)) {
-            throw new XlsxException('Error in '.__CLASS__.'::'.__FUNCTION__.', no worksheets defined.');
+            throw new XlsxException('Error in ' . __CLASS__ . '::' . __FUNCTION__ . ', no worksheets defined.');
         }
         if (!$zip->open($filename, \ZipArchive::CREATE)) {
-            throw new XlsxException('Error in '.__CLASS__.'::'.__FUNCTION__.', unable to create zip.');
+            throw new XlsxException('Error in ' . __CLASS__ . '::' . __FUNCTION__ . ', unable to create zip.');
         }
         $zip->addEmptyDir('docProps/');
         $zip->addFromString('docProps/app.xml', XlsxBuilder::buildAppXML($this->company));
@@ -178,7 +181,7 @@ class Builder
         $zip->addFromString('_rels/.rels', XlsxBuilder::buildRelationshipsXML());
         $zip->addEmptyDir('xl/worksheets/');
         foreach ($this->sheets as $sheet) {
-            $zip->addFile($sheet->filename, 'xl/worksheets/'.$sheet->xmlname);
+            $zip->addFile($sheet->filename, 'xl/worksheets/' . $sheet->xmlname);
         }
         $zip->addFromString('xl/workbook.xml', XlsxBuilder::buildWorkbookXML($this->sheets));
         $zip->addFile($this->writeStylesXML(), 'xl/styles.xml');  //$zip->addFromString("xl/styles.xml", self::buildStylesXML() );
@@ -192,9 +195,9 @@ class Builder
     /**
      * @param       $sheetName
      * @param array $row
-     * @param null  $rowOptions
+     * @param array $rowOptions
      */
-    public function writeSheetRow($sheetName, array $row, $rowOptions = null)
+    public function writeSheetRow($sheetName, array $row, $rowOptions = [])
     {
         if (empty($sheetName)) {
             return;
@@ -204,22 +207,22 @@ class Builder
         $sheet = $this->getSheet();
         if (count($sheet->columns) < count($row)) {
             $defaultColumnTypes = $this->initColumnsTypes(array_fill($from = 0, count($row), 'GENERAL')); //will map to n_auto
-            $sheet->columns     = array_merge((array) $sheet->columns, $defaultColumnTypes);
+            $sheet->columns     = array_merge((array)$sheet->columns, $defaultColumnTypes);
         }
 
         if (!empty($rowOptions)) {
             $ht        = isset($rowOptions['height']) ? floatval($rowOptions['height']) : 12.1;
             $customHt  = isset($rowOptions['height']) ? true : false;
-            $hidden    = isset($rowOptions['hidden']) ? (bool) ($rowOptions['hidden']) : false;
-            $collapsed = isset($rowOptions['collapsed']) ? (bool) ($rowOptions['collapsed']) : false;
+            $hidden    = isset($rowOptions['hidden']) ? (bool)($rowOptions['hidden']) : false;
+            $collapsed = isset($rowOptions['collapsed']) ? (bool)($rowOptions['collapsed']) : false;
             $sheet->fileWriter->write(
-                '<row collapsed="'.($collapsed).'" customFormat="false" customHeight="'.($customHt).
-                '" hidden="'.($hidden).'" ht="'.($ht).'" outlineLevel="0" r="'.($sheet->rowCount + 1).'">'
+                '<row collapsed="' . ($collapsed) . '" customFormat="false" customHeight="' . ($customHt) .
+                '" hidden="' . ($hidden) . '" ht="' . ($ht) . '" outlineLevel="0" r="' . ($sheet->rowCount + 1) . '">'
             );
         } else {
             $sheet->fileWriter->write(
-                '<row collapsed="false" customFormat="false" customHeight="false" hidden="false" ht="12.1" outlineLevel="0" r="'.
-                ($sheet->rowCount + 1).'">'
+                '<row collapsed="false" customFormat="false" customHeight="false" hidden="false" ht="12.1" outlineLevel="0" r="' .
+                ($sheet->rowCount + 1) . '">'
             );
         }
 
@@ -265,14 +268,14 @@ class Builder
 
         $temporaryFilename = $this->tempFilename();
         $file              = new XlsxWriterBuffer($temporaryFilename);
-        $file->write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'."\n");
+        $file->write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . "\n");
         $file->write('<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">');
-        $file->write('<numFmts count="'.count($this->numberFormats).'">');
+        $file->write('<numFmts count="' . count($this->numberFormats) . '">');
         foreach ($this->numberFormats as $i => $v) {
-            $file->write('<numFmt numFmtId="'.(164 + $i).'" formatCode="'.Support::xmlSpecialChars($v).'" />');
+            $file->write('<numFmt numFmtId="' . (164 + $i) . '" formatCode="' . Support::xmlSpecialChars($v) . '" />');
         }
         $file->write('</numFmts>');
-        $file->write('<fonts count="'.(count($fonts)).'">');
+        $file->write('<fonts count="' . (count($fonts)) . '">');
         $file->write('<font><name val="Arial"/><charset val="1"/><family val="2"/><sz val="10"/></font>');
         $file->write('<font><name val="Arial"/><family val="0"/><sz val="10"/></font>');
         $file->write('<font><name val="Arial"/><family val="0"/><sz val="10"/></font>');
@@ -282,10 +285,10 @@ class Builder
             if (!empty($font)) { //fonts have 4 empty placeholders in array to offset the 4 static xml entries above
                 $f = json_decode($font, true);
                 $file->write('<font>');
-                $file->write('<name val="'.htmlspecialchars($f['name']).'"/><charset val="1"/><family val="'.intval($f['family']).'"/>');
-                $file->write('<sz val="'.intval($f['size']).'"/>');
+                $file->write('<name val="' . htmlspecialchars($f['name']) . '"/><charset val="1"/><family val="' . intval($f['family']) . '"/>');
+                $file->write('<sz val="' . intval($f['size']) . '"/>');
                 if (!empty($f['color'])) {
-                    $file->write('<color rgb="'.strval($f['color']).'"/>');
+                    $file->write('<color rgb="' . strval($f['color']) . '"/>');
                 }
                 if (!empty($f['bold'])) {
                     $file->write('<b val="true"/>');
@@ -304,23 +307,23 @@ class Builder
         }
         $file->write('</fonts>');
 
-        $file->write('<fills count="'.(count($fills)).'">');
+        $file->write('<fills count="' . (count($fills)) . '">');
         $file->write('<fill><patternFill patternType="none"/></fill>');
         $file->write('<fill><patternFill patternType="gray125"/></fill>');
         foreach ($fills as $fill) {
             if (!empty($fill)) { //fills have 2 empty placeholders in array to offset the 2 static xml entries above
-                $file->write('<fill><patternFill patternType="solid"><fgColor rgb="'.strval($fill).'"/><bgColor indexed="64"/></patternFill></fill>');
+                $file->write('<fill><patternFill patternType="solid"><fgColor rgb="' . strval($fill) . '"/><bgColor indexed="64"/></patternFill></fill>');
             }
         }
         $file->write('</fills>');
 
-        $file->write('<borders count="'.(count($borders)).'">');
+        $file->write('<borders count="' . (count($borders)) . '">');
         $file->write('<border diagonalDown="false" diagonalUp="false"><left/><right/><top/><bottom/><diagonal/></border>');
         foreach ($borders as $border) {
             if (!empty($border)) { //fonts have an empty placeholder in the array to offset the static xml entry above
                 $pieces       = json_decode($border, true);
                 $border_style = !empty($pieces['style']) ? $pieces['style'] : 'hair';
-                $border_color = !empty($pieces['color']) ? '<color rgb="'.strval($pieces['color']).'"/>' : '';
+                $border_color = !empty($pieces['color']) ? '<color rgb="' . strval($pieces['color']) . '"/>' : '';
                 $file->write('<border diagonalDown="false" diagonalUp="false">');
                 foreach (['left', 'right', 'top', 'bottom'] as $side) {
                     $show_side = in_array($side, $pieces['side']) ? true : false;
@@ -358,7 +361,7 @@ class Builder
         $file->write('<xf applyAlignment="false" applyBorder="false" applyFont="true" applyProtection="false" borderId="0" fillId="0" fontId="1" numFmtId="9"/>');
         $file->write('</cellStyleXfs>');
 
-        $file->write('<cellXfs count="'.(count($styleIndexes)).'">');
+        $file->write('<cellXfs count="' . (count($styleIndexes)) . '">');
         foreach ($styleIndexes as $v) {
             $applyAlignment = isset($v['alignment']) ? 'true' : 'false';
             $wrapText       = !empty($v['wrap_text']) ? 'true' : 'false';
@@ -369,8 +372,8 @@ class Builder
             $borderIdx      = isset($v['border_idx']) ? intval($v['border_idx']) : 0;
             $fillIdx        = isset($v['fill_idx']) ? intval($v['fill_idx']) : 0;
             $fontIdx        = isset($v['font_idx']) ? intval($v['font_idx']) : 0;
-            $file->write('<xf applyAlignment="'.$applyAlignment.'" applyBorder="'.$applyBorder.'" applyFont="'.$applyFont.'" applyProtection="false" borderId="'.($borderIdx).'" fillId="'.($fillIdx).'" fontId="'.($fontIdx).'" numFmtId="'.(164 + $v['num_fmt_idx']).'" xfId="0">');
-            $file->write('	<alignment horizontal="'.$horizAlignment.'" vertical="'.$vertAlignment.'" textRotation="0" wrapText="'.$wrapText.'" indent="0" shrinkToFit="false"/>');
+            $file->write('<xf applyAlignment="' . $applyAlignment . '" applyBorder="' . $applyBorder . '" applyFont="' . $applyFont . '" applyProtection="false" borderId="' . ($borderIdx) . '" fillId="' . ($fillIdx) . '" fontId="' . ($fontIdx) . '" numFmtId="' . (164 + $v['num_fmt_idx']) . '" xfId="0">');
+            $file->write('	<alignment horizontal="' . $horizAlignment . '" vertical="' . $vertAlignment . '" textRotation="0" wrapText="' . $wrapText . '" indent="0" shrinkToFit="false"/>');
             $file->write('	<protection locked="true" hidden="false"/>');
             $file->write('</xf>');
         }
@@ -413,7 +416,8 @@ class Builder
         if ($this->sheetName == $sheetName || $this->hasSheet($sheetName)) {
             return;
         }
-        $colWidths = isset($colOptions['widths']) ? (array) $colOptions['widths'] : [];
+        $style     = $colOptions;
+        $colWidths = isset($colOptions['widths']) ? (array)$colOptions['widths'] : [];
         $this->createSheet($sheetName, $colOptions);
         $sheet = $this->getSheet();
         $sheet->initContent($colWidths, $this->isTabSelected());
@@ -422,7 +426,7 @@ class Builder
             $headerRow      = array_keys($headerTypes);
             $writer         = $sheet->getFileWriter();
             $writer->write(
-                '<row collapsed="false" customFormat="false" customHeight="false" hidden="false" ht="12.1" outlineLevel="0" r="'. 1 .'">'
+                '<row collapsed="false" customFormat="false" customHeight="false" hidden="false" ht="12.1" outlineLevel="0" r="' . 1 . '">'
             );
             foreach ($headerRow as $c => $v) {
                 $cellStyleIdx = empty($style) ?
@@ -497,7 +501,7 @@ class Builder
     protected function createSheet(string $sheetName, array $colOptions = [])
     {
         $sheetFilename = $this->tempFilename();
-        $sheetXmlName  = 'sheet'.(count($this->sheets) + 1).'.xml';
+        $sheetXmlName  = 'sheet' . (count($this->sheets) + 1) . '.xml';
         $autoFilter    = isset($colOptions['auto_filter']) ? intval($colOptions['auto_filter']) : false;
         $freezeRows    = isset($colOptions['freeze_rows']) ? intval($colOptions['freeze_rows']) : false;
         $freezeColumns = isset($colOptions['freeze_columns']) ? intval($colOptions['freeze_columns']) : false;
@@ -616,11 +620,11 @@ class Builder
     }
 
     /**
-     * @param string $keywords
+     * @param array $keywords
      *
      * @return $this
      */
-    public function setKeywords($keywords = '')
+    public function setKeywords(array $keywords = [])
     {
         $this->keywords = $keywords;
 
@@ -643,6 +647,7 @@ class Builder
     {
         if (!empty($this->tempFiles)) {
             foreach ($this->tempFiles as $tempFile) {
+                /** @scrutinizer ignore-unhandled */
                 @unlink($tempFile);
             }
         }

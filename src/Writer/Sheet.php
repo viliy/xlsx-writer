@@ -3,7 +3,6 @@
 namespace Zhaqq\Xlsx\Writer;
 
 use Zhaqq\Xlsx\Support;
-use Zhaqq\Xlsx\XlsxWriter;
 
 /**
  * @property mixed filename
@@ -30,7 +29,7 @@ class Sheet
      * Sheet constructor.
      *
      * @param array $config
-     * @param null  $fileWriter
+     * @param null|string $fileWriter
      */
     public function __construct(array $config, $fileWriter = null)
     {
@@ -160,7 +159,7 @@ EOF
 
         if (!empty($this->merge_cells)) {
             $this->fileWriter->write('<mergeCells>');
-            foreach ($this->merge_cells as $range) {
+            foreach ($this->mergeCells as $range) {
                 $this->fileWriter->write('<mergeCell ref="'.$range.'"/>');
             }
             $this->fileWriter->write('</mergeCells>');

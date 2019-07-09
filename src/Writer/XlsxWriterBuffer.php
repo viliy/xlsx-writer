@@ -2,6 +2,8 @@
 
 namespace Zhaqq\Xlsx\Writer;
 
+use Zhaqq\Exception\XlsxException;
+
 /**
  * Class XlsxWriterBuffer.
  *
@@ -75,6 +77,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
                 $this->checkUtf8 = false;
                 throw new XlsxException('Error, invalid UTF8 encoding detected.');
             }
+            /** @scrutinizer ignore-type */
             fwrite($this->fd, $this->buffer);
             $this->buffer = '';
         }
@@ -87,6 +90,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
     {
         $this->purge();
         if ($this->fd) {
+            /** @scrutinizer ignore-type */
             fclose($this->fd);
             $this->fd = null;
         }
@@ -119,7 +123,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
     {
         if ($this->fd) {
             $this->purge();
-
+            /** @scrutinizer ignore-type */
             return fseek($this->fd, $pos);
         }
 

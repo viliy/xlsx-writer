@@ -6,13 +6,12 @@ use Zhaqq\Xlsx\XlsxWriter;
 
 date_default_timezone_set('PRC');
 $start = microtime(true);
-ini_set('memory_limit', '512M');
+ini_set('memory_limit', '20M');
 
 times($start);
 
 try {
     $writer = new \Zhaqq\Xlsx\Writer\Builder();
-//    $writer = new XlsxWriter();
 
     $fileName = __DIR__ . '/data/xlsx_writer' . date('Ymd-His') . '.xlsx';
     $writer->buildHeader('sheet_name_1', otherHead());
@@ -28,7 +27,7 @@ try {
     times($start);
 
 } catch (\Exception $exception) {
-
+    var_dump($exception->getMessage());
 }
 
 
