@@ -13,8 +13,6 @@ enabled:
     - include
     - no_trailing_comma_in_list_call
     - no_leading_namespace_whitespace
-    binary_operator_spaces:
-        -   default: align_single_space_minimal
 
 finder:
     exclude:
