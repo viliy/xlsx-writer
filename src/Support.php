@@ -47,31 +47,39 @@ class Support
         switch ($numFormat) {
             case 'string':
                 $numFormat = '@';
+
                 break;
             case 'integer':
                 $numFormat = '0';
+
                 break;
             case 'date':
                 $numFormat = 'YYYY-MM-DD';
+
                 break;
             case 'datetime':
                 $numFormat = 'YYYY-MM-DD HH:MM:SS';
+
                 break;
             case 'price':
                 $numFormat = '#,##0.00';
+
                 break;
             case 'float3':
                 $numFormat = '#,###0.000';
+
                 break;
             case 'dollar':
                 $numFormat = '[$$-1009]#,##0.00;[RED]-[$$-1009]#,##0.00';
+
                 break;
             case 'euro':
                 $numFormat = '#,##0.00 [$€-407];[RED]-#,##0.00 [$€-407]';
+
                 break;
         }
         $ignoreUntil = '';
-        $escaped     = '';
+        $escaped = '';
         for ($i = 0, $ix = strlen($numFormat); $i < $ix; ++$i) {
             $c = $numFormat[$i];
             if ('' == $ignoreUntil && '[' == $c) {
@@ -129,7 +137,7 @@ class Support
         $existingIdx = array_search($needle, $haystack, $strict = true);
         if (false === $existingIdx) {
             $existingIdx = count($haystack);
-            $haystack[]  = $needle;
+            $haystack[] = $needle;
         }
 
         return $existingIdx;
@@ -143,7 +151,7 @@ class Support
     public static function xmlSpecialChars($val)
     {
         //note, badchars does not include \t\n\r (\x09\x0a\x0d)
-        static $badchars  = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x7f";
+        static $badchars = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x7f";
         static $goodchars = '                              ';
 
         return strtr(htmlspecialchars($val, ENT_QUOTES | ENT_XML1), $badchars, $goodchars); //strtr appears to be faster than str_replace
@@ -157,7 +165,7 @@ class Support
     public static function convertDateTime($dateInput)
     {
         $seconds = 0;    // Time expressed as fraction of 24h hours in seconds
-        $year    = $month    = $day    = 0;
+        $year = $month = $day = 0;
 
         $date_time = $dateInput;
         if (preg_match("/(\d{4})\-(\d{2})\-(\d{2})/", $date_time, $matches)) {
@@ -165,7 +173,7 @@ class Support
         }
         if (preg_match("/(\d+):(\d{2}):(\d{2})/", $date_time, $matches)) {
             list($junk, $hour, $min, $sec) = $matches;
-            $seconds                       = ($hour * 60 * 60 + $min * 60 + $sec) / (24 * 60 * 60);
+            $seconds = ($hour * 60 * 60 + $min * 60 + $sec) / (24 * 60 * 60);
         }
         unset($junk);
 
@@ -184,12 +192,12 @@ class Support
         // and adjust for the number of leap days. We calculate the number of leap
         // days by normalising the year in relation to the epoch. Thus the year 2000
         // becomes 100 for 4 and 100 year leapdays and 400 for 400 year leapdays.
-        $epoch  = 1900;
+        $epoch = 1900;
         $offset = 0;
-        $norm   = 300;
-        $range  = $year - $epoch;
+        $norm = 300;
+        $range = $year - $epoch;
         // Set month days and check for leap year.
-        $leap  = ((0 == $year % 400) || ((0 == $year % 4) && ($year % 100))) ? 1 : 0;
+        $leap = ((0 == $year % 400) || ((0 == $year % 4) && ($year % 100))) ? 1 : 0;
         $mdays = [31, ($leap ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         // Some boundary checks
         if ($year < $epoch || $year > 9999) {
@@ -219,11 +227,11 @@ class Support
 
     public static function sanitizeSheetname($sheetname)
     {
-        static $badchars  = '\\/?*:[]';
+        static $badchars = '\\/?*:[]';
         static $goodchars = '        ';
-        $sheetname        = strtr($sheetname, $badchars, $goodchars);
-        $sheetname        = mb_substr($sheetname, 0, 31);
-        $sheetname        = trim(trim(trim($sheetname), "'")); //trim before and after trimming single quotes
+        $sheetname = strtr($sheetname, $badchars, $goodchars);
+        $sheetname = mb_substr($sheetname, 0, 31);
+        $sheetname = trim(trim(trim($sheetname), "'")); //trim before and after trimming single quotes
 
         return !empty($sheetname) ? $sheetname : 'Sheet'.((rand() % 900) + 100);
     }

@@ -31,6 +31,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
      * @var string
      */
     protected $buffer = '';
+
     /**
      * 检验字符集.
      *
@@ -48,7 +49,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
     public function __construct($filename, $fdFopenFlags = self::F_OPEN_FLAGS_W, $checkUtf8 = false)
     {
         $this->checkUtf8 = $checkUtf8;
-        $this->fd        = fopen($filename, $fdFopenFlags);
+        $this->fd = fopen($filename, $fdFopenFlags);
         if (false === $this->fd) {
             throw new XlsxException("Unable to open $filename for writing.");
         }
@@ -75,10 +76,11 @@ class XlsxWriterBuffer implements WriterBufferInterface
         if ($this->fd) {
             if ($this->checkUtf8 && !self::isValidUTF8($this->buffer)) {
                 $this->checkUtf8 = false;
+
                 throw new XlsxException('Error, invalid UTF8 encoding detected.');
             }
 
-            fwrite(/** @scrutinizer ignore-type */$this->fd, $this->buffer);
+            fwrite(/* @scrutinizer ignore-type */$this->fd, $this->buffer);
             $this->buffer = '';
         }
     }
@@ -90,7 +92,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
     {
         $this->purge();
         if ($this->fd) {
-            fclose(/** @scrutinizer ignore-type */$this->fd);
+            fclose(/* @scrutinizer ignore-type */$this->fd);
             $this->fd = null;
         }
     }
@@ -123,7 +125,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
         if ($this->fd) {
             $this->purge();
 
-            return fseek(/** @scrutinizer ignore-type */$this->fd, $pos);
+            return fseek(/* @scrutinizer ignore-type */$this->fd, $pos);
         }
 
         return -1;

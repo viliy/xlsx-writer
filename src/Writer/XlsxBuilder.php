@@ -41,15 +41,15 @@ EOF;
         array $keywords = [],
         string $description = ''
     ) {
-        $title    = Support::xmlSpecialChars($title);
-        $subject  = Support::xmlSpecialChars($subject);
-        $author   = Support::xmlSpecialChars($author);
+        $title = Support::xmlSpecialChars($title);
+        $subject = Support::xmlSpecialChars($subject);
+        $author = Support::xmlSpecialChars($author);
         $keywords = Support::xmlSpecialChars(implode(',', $keywords));
         if ($keywords) {
             $keywords = '<cp:keywords>'.$keywords.'</cp:keywords>';
         }
         $description = Support::xmlSpecialChars($description);
-        $date        = date("Y-m-d\TH:i:s.00\Z");
+        $date = date("Y-m-d\TH:i:s.00\Z");
 
         return <<<EOF
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -85,8 +85,8 @@ EOF;
      */
     public static function buildWorkbookXML(array $sheets)
     {
-        $i           = 0;
-        $workbookXml = <<<EOF
+        $i = 0;
+        $workbookXml = <<<'EOF'
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><fileVersion appName="Calc"/><workbookPr backupFile="false" showObjects="all" date1904="false"/><workbookProtection/><bookViews><workbookView activeTab="0" firstSheet="0" showHorizontalScroll="true" showSheetTabs="true" showVerticalScroll="true" tabRatio="212" windowHeight="8192" windowWidth="16384" xWindow="0" yWindow="0"/></bookViews><sheets>
 EOF;
@@ -118,8 +118,8 @@ EOF;
      */
     public static function buildWorkbookRelsXML(array $sheets)
     {
-        $i           = 0;
-        $wkbkrelsXml = <<<EOF
+        $i = 0;
+        $wkbkrelsXml = <<<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
 EOF;

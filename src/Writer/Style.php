@@ -16,6 +16,7 @@ trait Style
      * @var array
      */
     protected $cellStyles = [];
+
     /**
      * @var array
      */
@@ -56,22 +57,22 @@ trait Style
     protected function addCellStyle($numberFormat, $cellStyleString)
     {
         $numberFormatIdx = Support::add2listGetIndex($this->numberFormats, $numberFormat);
-        $lookupString    = $numberFormatIdx.';'.$cellStyleString;
+        $lookupString = $numberFormatIdx.';'.$cellStyleString;
 
         return Support::add2listGetIndex($this->cellStyles, $lookupString);
     }
 
     public function styleFontIndexes(array $cellStyles)
     {
-        $fills        = ['', '']; //2 placeholders for static xml later
-        $fonts        = ['', '', '', '']; //4 placeholders for static xml later
-        $borders      = ['']; //1 placeholder for static xml later
+        $fills = ['', '']; //2 placeholders for static xml later
+        $fonts = ['', '', '', '']; //4 placeholders for static xml later
+        $borders = ['']; //1 placeholder for static xml later
         $styleIndexes = [];
         foreach ($cellStyles as $i => $cellStyleString) {
-            $semiColonPos     = strpos($cellStyleString, ';');
-            $numberFormatIdx  = substr($cellStyleString, 0, $semiColonPos);
-            $styleJsonString  = substr($cellStyleString, $semiColonPos + 1);
-            $style            = @json_decode($styleJsonString, true);
+            $semiColonPos = strpos($cellStyleString, ';');
+            $numberFormatIdx = substr($cellStyleString, 0, $semiColonPos);
+            $styleJsonString = substr($cellStyleString, $semiColonPos + 1);
+            $style = @json_decode($styleJsonString, true);
             $styleIndexes[$i] = ['num_fmt_idx' => $numberFormatIdx]; //initialize entry
             if (isset($style['border']) && is_string($style['border'])) { //border is a comma delimited str
                 $borderValue['side'] = array_intersect(explode(',', $style['border']), $this->borderAllowed);
@@ -79,24 +80,24 @@ trait Style
                     $borderValue['style'] = $style['border-style'];
                 }
                 if (isset($style['border-color']) && is_string($style['border-color']) && '#' == $style['border-color'][0]) {
-                    $v                     = substr($style['border-color'], 1, 6);
-                    $v                     = 3 == strlen($v) ? $v[0].$v[0].$v[1].$v[1].$v[2].$v[2] : $v; // expand cf0 => ccff00
+                    $v = substr($style['border-color'], 1, 6);
+                    $v = 3 == strlen($v) ? $v[0].$v[0].$v[1].$v[1].$v[2].$v[2] : $v; // expand cf0 => ccff00
                     $border_value['color'] = 'FF'.strtoupper($v);
                 }
                 $styleIndexes[$i]['border_idx'] = Support::add2listGetIndex($borders, json_encode($borderValue));
             }
             if (isset($style['fill']) && is_string($style['fill']) && '#' == $style['fill'][0]) {
-                $v                            = substr($style['fill'], 1, 6);
-                $v                            = 3 == strlen($v) ? $v[0].$v[0].$v[1].$v[1].$v[2].$v[2] : $v; // expand cf0 => ccff00
+                $v = substr($style['fill'], 1, 6);
+                $v = 3 == strlen($v) ? $v[0].$v[0].$v[1].$v[1].$v[2].$v[2] : $v; // expand cf0 => ccff00
                 $styleIndexes[$i]['fill_idx'] = Support::add2listGetIndex($fills, 'FF'.strtoupper($v));
             }
             if (isset($style['halign']) && in_array($style['halign'], $this->horizontalAllowed)) {
                 $styleIndexes[$i]['alignment'] = true;
-                $styleIndexes[$i]['halign']    = $style['halign'];
+                $styleIndexes[$i]['halign'] = $style['halign'];
             }
             if (isset($style['valign']) && in_array($style['valign'], $this->verticalAllowed)) {
                 $styleIndexes[$i]['alignment'] = true;
-                $styleIndexes[$i]['valign']    = $style['valign'];
+                $styleIndexes[$i]['valign'] = $style['valign'];
             }
             if (isset($style['wrap_text'])) {
                 $styleIndexes[$i]['alignment'] = true;
@@ -134,8 +135,8 @@ trait Style
                 }
             }
             if (isset($style['color']) && is_string($style['color']) && '#' == $style['color'][0]) {
-                $v             = substr($style['color'], 1, 6);
-                $v             = 3 == strlen($v) ? $v[0].$v[0].$v[1].$v[1].$v[2].$v[2] : $v; // expand cf0 => ccff00
+                $v = substr($style['color'], 1, 6);
+                $v = 3 == strlen($v) ? $v[0].$v[0].$v[1].$v[1].$v[2].$v[2] : $v; // expand cf0 => ccff00
                 $font['color'] = 'FF'.strtoupper($v);
             }
             if ($font != $this->defaultFont) {
@@ -144,10 +145,10 @@ trait Style
         }
 
         return [
-            'fills'   => $fills,
-            'fonts'   => $fonts,
+            'fills' => $fills,
+            'fonts' => $fonts,
             'borders' => $borders,
-            'styles'  => $styleIndexes,
+            'styles' => $styleIndexes,
         ];
     }
 }
