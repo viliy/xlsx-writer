@@ -28,7 +28,7 @@ class Sheet
     /**
      * Sheet constructor.
      *
-     * @param array $config
+     * @param array       $config
      * @param null|string $fileWriter
      */
     public function __construct(array $config, $fileWriter = null)
@@ -36,18 +36,18 @@ class Sheet
         if (empty($config)) {
             throw new \RuntimeException('sheet config must be array');
         }
-        $this->filename        = $config['filename'];
-        $this->sheetname       = $config['sheetname'];
-        $this->xmlname         = $config['xmlname'];
-        $this->rowCount        = $config['row_count'];
-        $this->columns         = $config['columns'];
-        $this->mergeCells      = $config['merge_cells'];
+        $this->filename = $config['filename'];
+        $this->sheetname = $config['sheetname'];
+        $this->xmlname = $config['xmlname'];
+        $this->rowCount = $config['row_count'];
+        $this->columns = $config['columns'];
+        $this->mergeCells = $config['merge_cells'];
         $this->maxCellTagStart = $config['max_cell_tag_start'];
-        $this->maxCellTagEnd   = $config['max_cell_tag_end'];
-        $this->autoFilter      = $config['auto_filter'];
-        $this->freezeRows      = $config['freeze_rows'];
-        $this->freezeColumns   = $config['freeze_columns'];
-        $this->finalized       = $config['finalized'];
+        $this->maxCellTagEnd = $config['max_cell_tag_end'];
+        $this->autoFilter = $config['auto_filter'];
+        $this->freezeRows = $config['freeze_rows'];
+        $this->freezeColumns = $config['freeze_columns'];
+        $this->finalized = $config['finalized'];
         $this->setFileWriter($fileWriter);
     }
 
@@ -61,7 +61,7 @@ class Sheet
     public function writeCell($rowNumber, $columnNumber, $value, $numFormatType, $cellStyleIdx)
     {
         $cellName = Support::xlsCell($rowNumber, $columnNumber);
-        $file     = $this->getFileWriter();
+        $file = $this->getFileWriter();
         if (!is_scalar($value) || '' === $value) { //objects, array, empty
             $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'"/>');
         } elseif (is_string($value) && '=' == $value[0]) {
@@ -71,10 +71,12 @@ class Sheet
                 case 'n_date':
                     $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="n"><v>'.
                         intval(Support::convertDateTime($value)).'</v></c>');
+
                     break;
                 case 'n_datetime':
                     $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="n"><v>'.
                         Support::convertDateTime($value).'</v></c>');
+
                     break;
                 case 'n_numeric':
                     $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="n"><v>'.
@@ -83,6 +85,7 @@ class Sheet
                 case 'n_string':
                     $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="inlineStr"><is><t>'.
                         Support::xmlSpecialChars($value).'</t></is></c>');
+
                     break;
                 case 'n_auto':
                 default: //auto-detect unknown column types
@@ -98,6 +101,7 @@ class Sheet
                             Support::xmlSpecialChars($value).'</t></is></c>'
                         );
                     }
+
                     break;
             }
         }
@@ -109,12 +113,12 @@ class Sheet
      */
     public function initContent(array $colWidths = [], $isTabSelected = false)
     {
-        $writer      = $this->getFileWriter();
+        $writer = $this->getFileWriter();
         $tabSelected = $isTabSelected ? 'true' : 'false';
-        $maxCell     = Support::xlsCell(XlsxWriter::EXCEL_2007_MAX_ROW, XlsxWriter::EXCEL_2007_MAX_COL); //XFE1048577
+        $maxCell = Support::xlsCell(XlsxWriter::EXCEL_2007_MAX_ROW, XlsxWriter::EXCEL_2007_MAX_COL); //XFE1048577
         $writer->write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'."\n");
         $writer->write(
-            <<<EOF
+            <<<'EOF'
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr filterMode="false"><pageSetUpPr fitToPage="false"/></sheetPr>
 EOF
         );
@@ -180,7 +184,7 @@ EOF
         $this->fileWriter->write('</headerFooter>');
         $this->fileWriter->write('</worksheet>');
 
-        $max_cell_tag   = '<dimension ref="A1:'.$max_cell.'"/>';
+        $max_cell_tag = '<dimension ref="A1:'.$max_cell.'"/>';
         $padding_length = $this->maxCellTagEnd - $this->maxCellTagStart - strlen($max_cell_tag);
         $this->fileWriter->fseek($this->maxCellTagStart);
         $this->fileWriter->write($max_cell_tag.str_repeat(' ', $padding_length));
