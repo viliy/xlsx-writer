@@ -1,9 +1,10 @@
-preset: symfony
+preset: symfo ny
 
 risky: false
 
-enabled:
+disabled:
     - binary_operator_spaces
+    - operators_spaces
 
 finder:
     exclude:
