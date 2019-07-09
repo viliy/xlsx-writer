@@ -2,37 +2,35 @@
 
 namespace Zhaqq\Xlsx\Writer;
 
-
 /**
- * Class XlsxWriterBuffer
- * @package Common\Util\XlsxExcelWriter
+ * Class XlsxWriterBuffer.
+ *
  * @author  QiuXiaoYong on 2019-07-02 13:21
  */
 class XlsxWriterBuffer implements WriterBufferInterface
 {
-
     const BUFFER_SIZE = 8191;
 
     /**
-     * 默认打开标识
+     * 默认打开标识.
      */
     const F_OPEN_FLAGS_W = 'w';
 
     /**
-     * 当前文件标识位
+     * 当前文件标识位.
      *
      * @var bool|resource|null
      */
     protected $fd = null;
 
     /**
-     * 当前数据大小
+     * 当前数据大小.
      *
      * @var string
      */
     protected $buffer = '';
     /**
-     * 检验字符集
+     * 检验字符集.
      *
      * @var bool
      */
@@ -49,7 +47,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
     {
         $this->checkUtf8 = $checkUtf8;
         $this->fd        = fopen($filename, $fdFopenFlags);
-        if ($this->fd === false) {
+        if (false === $this->fd) {
             throw new XlsxException("Unable to open $filename for writing.");
         }
     }
@@ -75,7 +73,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
         if ($this->fd) {
             if ($this->checkUtf8 && !self::isValidUTF8($this->buffer)) {
                 $this->checkUtf8 = false;
-                throw new XlsxException("Error, invalid UTF8 encoding detected.");
+                throw new XlsxException('Error, invalid UTF8 encoding detected.');
             }
             fwrite($this->fd, $this->buffer);
             $this->buffer = '';
@@ -103,8 +101,10 @@ class XlsxWriterBuffer implements WriterBufferInterface
     {
         if ($this->fd) {
             $this->purge();
+
             return ftell($this->fd);
         }
+
         return -1;
     }
 
@@ -119,13 +119,15 @@ class XlsxWriterBuffer implements WriterBufferInterface
     {
         if ($this->fd) {
             $this->purge();
+
             return fseek($this->fd, $pos);
         }
+
         return -1;
     }
 
     /**
-     * 关闭文件
+     * 关闭文件.
      */
     public function __destruct()
     {
@@ -144,6 +146,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
         if (function_exists('mb_check_encoding')) {
             return mb_check_encoding($string, 'UTF-8') ? true : false;
         }
-        return preg_match("//u", $string) ? true : false;
+
+        return preg_match('//u', $string) ? true : false;
     }
 }

@@ -52,7 +52,6 @@ class Sheet
         $this->setFileWriter($fileWriter);
     }
 
-
     /**
      * @param $rowNumber
      * @param $columnNumber
@@ -64,42 +63,40 @@ class Sheet
     {
         $cellName = Support::xlsCell($rowNumber, $columnNumber);
         $file     = $this->getFileWriter();
-        if (!is_scalar($value) || $value === '') { //objects, array, empty
-            $file->write('<c r="' . $cellName . '" s="' . $cellStyleIdx . '"/>');
-        } elseif (is_string($value) && $value{0} == '=') {
-            $file->write('<c r="' . $cellName . '" s="' . $cellStyleIdx . '" t="s"><f>' . Support::xmlSpecialChars($value) . '</f></c>');
+        if (!is_scalar($value) || '' === $value) { //objects, array, empty
+            $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'"/>');
+        } elseif (is_string($value) && '=' == $value[0]) {
+            $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.Support::xmlSpecialChars($value).'</f></c>');
         } else {
             switch ($numFormatType) {
                 case 'n_date':
-                    $file->write('<c r="' . $cellName . '" s="' . $cellStyleIdx . '" t="n"><v>' .
-                        intval(Support::convertDateTime($value)) . '</v></c>');
+                    $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="n"><v>'.
+                        intval(Support::convertDateTime($value)).'</v></c>');
                     break;
                 case 'n_datetime':
-                    $file->write('<c r="' . $cellName . '" s="' . $cellStyleIdx . '" t="n"><v>' .
-                        Support::convertDateTime($value) . '</v></c>');
+                    $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="n"><v>'.
+                        Support::convertDateTime($value).'</v></c>');
                     break;
                 case 'n_numeric':
-                    $file->write('<c r="' . $cellName . '" s="' . $cellStyleIdx . '" t="n"><v>' .
-                        Support::xmlSpecialChars($value) . '</v></c>');//int,float,currency
+                    $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="n"><v>'.
+                        Support::xmlSpecialChars($value).'</v></c>'); //int,float,currency
                     break;
                 case 'n_string':
-                    $file->write('<c r="' . $cellName . '" s="' . $cellStyleIdx . '" t="inlineStr"><is><t>' .
-                        Support::xmlSpecialChars($value) . '</t></is></c>');
+                    $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="inlineStr"><is><t>'.
+                        Support::xmlSpecialChars($value).'</t></is></c>');
                     break;
                 case 'n_auto':
                 default: //auto-detect unknown column types
-                    if (!is_string($value) || $value == '0' ||
-                        ($value[0] != '0' && ctype_digit($value)) ||
-                        preg_match("/^\-?(0|[1-9][0-9]*)(\.[0-9]+)?$/", $value)
+                    if (!is_string($value) || '0' == $value || ('0' != $value[0] && ctype_digit($value)) || preg_match("/^\-?(0|[1-9][0-9]*)(\.[0-9]+)?$/", $value)
                     ) { //int,float,currency
                         $file->write(
-                            '<c r="' . $cellName . '" s="' . $cellStyleIdx . '" t="n"><v>' .
-                            Support::xmlSpecialChars($value) . '</v></c>'
+                            '<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="n"><v>'.
+                            Support::xmlSpecialChars($value).'</v></c>'
                         );
                     } else { //implied: ($cell_format=='string')
                         $file->write(
-                            '<c r="' . $cellName . '" s="' . $cellStyleIdx . '" t="inlineStr"><is><t>' .
-                            Support::xmlSpecialChars($value) . '</t></is></c>'
+                            '<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="inlineStr"><is><t>'.
+                            Support::xmlSpecialChars($value).'</t></is></c>'
                         );
                     }
                     break;
@@ -115,17 +112,19 @@ class Sheet
     {
         $writer      = $this->getFileWriter();
         $tabSelected = $isTabSelected ? 'true' : 'false';
-        $maxCell     = Support::xlsCell(XlsxWriter::EXCEL_2007_MAX_ROW, XlsxWriter::EXCEL_2007_MAX_COL);//XFE1048577
-        $writer->write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . "\n");
-        $writer->write(<<<EOF
+        $maxCell     = Support::xlsCell(XlsxWriter::EXCEL_2007_MAX_ROW, XlsxWriter::EXCEL_2007_MAX_COL); //XFE1048577
+        $writer->write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'."\n");
+        $writer->write(
+            <<<EOF
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr filterMode="false"><pageSetUpPr fitToPage="false"/></sheetPr>
 EOF
         );
         $this->maxCellTagStart = $this->fileWriter->ftell();
-        $writer->write('<dimension ref="A1:' . $maxCell . '"/>');
+        $writer->write('<dimension ref="A1:'.$maxCell.'"/>');
         $this->maxCellTagEnd = $this->fileWriter->ftell();
         $writer->write('<sheetViews>');
-        $writer->write(<<<EOF
+        $writer->write(
+            <<<EOF
 <sheetView colorId="64" defaultGridColor="true" rightToLeft="false" showFormulas="false" showGridLines="true" showOutlineSymbols="true" showRowColHeaders="true" showZeros="true" tabSelected="$tabSelected" topLeftCell="A1" view="normal" windowProtection="false" workbookViewId="0" zoomScale="100" zoomScaleNormal="100" zoomScalePageLayoutView="100">'
 EOF
         );
@@ -143,15 +142,15 @@ EOF
         if (!empty($colWidths)) {
             foreach ($colWidths as $colWidth) {
                 $writer->write(
-                    '<col collapsed="false" hidden="false" max="' . ($i + 1) . '" min="' . ($i + 1) .
-                    '" style="0" customWidth="true" width="' . floatval($colWidth) . '"/>'
+                    '<col collapsed="false" hidden="false" max="'.($i + 1).'" min="'.($i + 1).
+                    '" style="0" customWidth="true" width="'.floatval($colWidth).'"/>'
                 );
-                $i++;
+                ++$i;
             }
         }
         $writer->write(
-            '<col collapsed="false" hidden="false" max="1024" min="' . ($i + 1) .
-            '" style="0" customWidth="false" width="11.5"/>' . '</cols><sheetData>'
+            '<col collapsed="false" hidden="false" max="1024" min="'.($i + 1).
+            '" style="0" customWidth="false" width="11.5"/>'.'</cols><sheetData>'
         );
     }
 
@@ -162,7 +161,7 @@ EOF
         if (!empty($this->merge_cells)) {
             $this->fileWriter->write('<mergeCells>');
             foreach ($this->merge_cells as $range) {
-                $this->fileWriter->write('<mergeCell ref="' . $range . '"/>');
+                $this->fileWriter->write('<mergeCell ref="'.$range.'"/>');
             }
             $this->fileWriter->write('</mergeCells>');
         }
@@ -170,7 +169,7 @@ EOF
         $max_cell = Support::xlsCell($this->rowCount - 1, count($this->columns) - 1);
 
         if ($this->autoFilter) {
-            $this->fileWriter->write('<autoFilter ref="A1:' . $max_cell . '"/>');
+            $this->fileWriter->write('<autoFilter ref="A1:'.$max_cell.'"/>');
         }
 
         $this->fileWriter->write('<printOptions headings="false" gridLines="false" gridLinesSet="true" horizontalCentered="false" verticalCentered="false"/>');
@@ -182,10 +181,10 @@ EOF
         $this->fileWriter->write('</headerFooter>');
         $this->fileWriter->write('</worksheet>');
 
-        $max_cell_tag   = '<dimension ref="A1:' . $max_cell . '"/>';
+        $max_cell_tag   = '<dimension ref="A1:'.$max_cell.'"/>';
         $padding_length = $this->maxCellTagEnd - $this->maxCellTagStart - strlen($max_cell_tag);
         $this->fileWriter->fseek($this->maxCellTagStart);
-        $this->fileWriter->write($max_cell_tag . str_repeat(" ", $padding_length));
+        $this->fileWriter->write($max_cell_tag.str_repeat(' ', $padding_length));
         $this->fileWriter->close();
         $this->finalized = true;
     }
@@ -194,14 +193,14 @@ EOF
     {
         $writer = $this->getFileWriter();
         $writer->write(
-            '<pane ySplit="' . $this->freezeRows . '" xSplit="' . $this->freezeColumns .
-            '" topLeftCell="' . Support::xlsCell($this->freezeRows, $this->freezeColumns) .
-            '" activePane="bottomRight" state="frozen"/>' . '<selection activeCell="' . Support::xlsCell($this->freezeRows, 0) .
-            '" activeCellId="0" pane="topRight" sqref="' . Support::xlsCell($this->freezeRows, 0) . '"/>' .
-            '<selection activeCell="' . Support::xlsCell(0, $this->freezeColumns) .
-            '" activeCellId="0" pane="bottomLeft" sqref="' . Support::xlsCell(0, $this->freezeColumns) . '"/>' .
-            '<selection activeCell="' . Support::xlsCell($this->freezeRows, $this->freezeColumns) .
-            '" activeCellId="0" pane="bottomRight" sqref="' . Support::xlsCell($this->freezeRows, $this->freezeColumns) . '"/>'
+            '<pane ySplit="'.$this->freezeRows.'" xSplit="'.$this->freezeColumns.
+            '" topLeftCell="'.Support::xlsCell($this->freezeRows, $this->freezeColumns).
+            '" activePane="bottomRight" state="frozen"/>'.'<selection activeCell="'.Support::xlsCell($this->freezeRows, 0).
+            '" activeCellId="0" pane="topRight" sqref="'.Support::xlsCell($this->freezeRows, 0).'"/>'.
+            '<selection activeCell="'.Support::xlsCell(0, $this->freezeColumns).
+            '" activeCellId="0" pane="bottomLeft" sqref="'.Support::xlsCell(0, $this->freezeColumns).'"/>'.
+            '<selection activeCell="'.Support::xlsCell($this->freezeRows, $this->freezeColumns).
+            '" activeCellId="0" pane="bottomRight" sqref="'.Support::xlsCell($this->freezeRows, $this->freezeColumns).'"/>'
         );
     }
 
@@ -209,10 +208,10 @@ EOF
     {
         $writer = $this->getFileWriter();
         $writer->write(
-            '<pane ySplit="' . $this->freezeRows . '" topLeftCell="' .
-            Support::xlsCell($this->freezeRows, 0) . '" activePane="bottomLeft" state="frozen"/>' .
-            '<selection activeCell="' . Support::xlsCell($this->freezeRows, 0) .
-            '" activeCellId="0" pane="bottomLeft" sqref="' . Support::xlsCell($this->freezeRows, 0) . '"/>'
+            '<pane ySplit="'.$this->freezeRows.'" topLeftCell="'.
+            Support::xlsCell($this->freezeRows, 0).'" activePane="bottomLeft" state="frozen"/>'.
+            '<selection activeCell="'.Support::xlsCell($this->freezeRows, 0).
+            '" activeCellId="0" pane="bottomLeft" sqref="'.Support::xlsCell($this->freezeRows, 0).'"/>'
         );
     }
 
@@ -220,10 +219,10 @@ EOF
     {
         $writer = $this->getFileWriter();
         $writer->write(
-            '<pane xSplit="' . $this->freezeColumns . '" topLeftCell="' .
-            Support::xlsCell(0, $this->freezeColumns) . '" activePane="topRight" state="frozen"/>' .
-            '<selection activeCell="' . Support::xlsCell(0, $this->freezeColumns) .
-            '" activeCellId="0" pane="topRight" sqref="' . Support::xlsCell(0, $this->freezeColumns) . '"/>'
+            '<pane xSplit="'.$this->freezeColumns.'" topLeftCell="'.
+            Support::xlsCell(0, $this->freezeColumns).'" activePane="topRight" state="frozen"/>'.
+            '<selection activeCell="'.Support::xlsCell(0, $this->freezeColumns).
+            '" activeCellId="0" pane="topRight" sqref="'.Support::xlsCell(0, $this->freezeColumns).'"/>'
         );
     }
 

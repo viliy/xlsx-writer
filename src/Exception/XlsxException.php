@@ -1,16 +1,14 @@
 <?php
 
 /**
- * Class XlsxException
- * @package Zhaqq\Exception
+ * Class XlsxException.
  */
+
 namespace Zhaqq\Exception;
 
 /**
- * Class XlsxException
- * @package Zhaqq\Exception
+ * Class XlsxException.
  */
 class XlsxException extends \RuntimeException
 {
-
 }

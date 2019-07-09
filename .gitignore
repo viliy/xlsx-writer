@@ -1,2 +1,5 @@
 vendor
 .idea
+.phpunit.result.cache
+*.phar
+.php_cs.cache
