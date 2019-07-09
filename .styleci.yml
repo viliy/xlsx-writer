@@ -2,6 +2,8 @@ preset: symfony
 
 risky: false
 
+disabled:
+    - binary_operator_spaces
 finder:
     exclude:
         - "tests"
