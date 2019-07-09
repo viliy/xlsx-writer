@@ -3,3 +3,5 @@ vendor
 .phpunit.result.cache
 *.phar
 .php_cs.cache
+composer.lock
+coverage.clover
