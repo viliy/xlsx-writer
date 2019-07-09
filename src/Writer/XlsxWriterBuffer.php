@@ -77,8 +77,8 @@ class XlsxWriterBuffer implements WriterBufferInterface
                 $this->checkUtf8 = false;
                 throw new XlsxException('Error, invalid UTF8 encoding detected.');
             }
-            /** @scrutinizer ignore-type */
-            fwrite($this->fd, $this->buffer);
+
+            fwrite(/** @scrutinizer ignore-type */$this->fd, $this->buffer);
             $this->buffer = '';
         }
     }
@@ -90,8 +90,7 @@ class XlsxWriterBuffer implements WriterBufferInterface
     {
         $this->purge();
         if ($this->fd) {
-            /** @scrutinizer ignore-type */
-            fclose($this->fd);
+            fclose(/** @scrutinizer ignore-type */$this->fd);
             $this->fd = null;
         }
     }
@@ -123,8 +122,8 @@ class XlsxWriterBuffer implements WriterBufferInterface
     {
         if ($this->fd) {
             $this->purge();
-            /** @scrutinizer ignore-type */
-            return fseek($this->fd, $pos);
+
+            return fseek(/** @scrutinizer ignore-type */$this->fd, $pos);
         }
 
         return -1;

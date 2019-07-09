@@ -226,7 +226,7 @@ EOF
     }
 
     /**
-     * @param WriterBufferInterface $fileWriter
+     * @param null|string $fileWriter
      *
      * @return Sheet
      */
