@@ -4,8 +4,6 @@ risky: false
 
 disabled:
     - binary_operator_spaces
-    - operators_spaces
-
 finder:
     exclude:
         - "tests"
