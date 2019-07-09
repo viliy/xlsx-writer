@@ -15,6 +15,9 @@ build:
     environment:
         php:
             version: 7.3
+    project_setup:
+        before:
+            - pecl install zip
     tests:
         override:
             -   command: vendor/bin/phpunit --coverage-clover=my-coverage-file
