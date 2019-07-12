@@ -6,8 +6,8 @@
 
 namespace Zhaqq\Xlsx\Writer;
 
-use Zhaqq\Exception\XlsxException;
 use Zhaqq\Xlsx\Support;
+use Zhaqq\Exception\XlsxException;
 
 /**
  * Class Builder.
@@ -450,11 +450,13 @@ class Builder
     protected function initColumnsTypes($headerTypes)
     {
         foreach ($headerTypes as $v) {
-            $numberFormat = Support::numberFormatStandardized($v);
+            $v = explode('_', $v);
+            $numFormat = $v[1] ?? $v[0];
+            $numberFormat = Support::numberFormatStandardized($numFormat);
             $cellStyleIdx = $this->addCellStyle($numberFormat, $styleString = null);
             $columns[] = [
                 'number_format' => $numberFormat,      //contains excel format like 'YYYY-MM-DD HH:MM:SS'
-                'number_format_type' => Support::determineNumberFormatType($numberFormat), //contains friendly format like 'datetime'
+                'number_format_type' => Support::determineNumberFormatType($numberFormat, 'function' === $v[0]), //contains friendly format like 'datetime'
                 'default_cell_style' => $cellStyleIdx,
             ];
         }

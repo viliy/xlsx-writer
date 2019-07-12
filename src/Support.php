@@ -99,10 +99,13 @@ class Support
         return $escaped;
     }
 
-    public static function determineNumberFormatType($numFormat)
+    public static function determineNumberFormatType($numFormat, $function = false)
     {
         $numFormat = preg_replace("/\[(Black|Blue|Cyan|Green|Magenta|Red|White|Yellow)\]/i", '', $numFormat);
 
+        if ($function) {
+            return 'n_function';
+        }
         switch ($numFormat) {
             case 'GENERAL':
                 return 'n_auto';

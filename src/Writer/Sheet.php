@@ -29,7 +29,7 @@ class Sheet
      * Sheet constructor.
      *
      * @param array       $config
-     * @param null|string $fileWriter
+     * @param string|null $fileWriter
      */
     public function __construct(array $config, $fileWriter = null)
     {
@@ -62,10 +62,22 @@ class Sheet
     {
         $cellName = Support::xlsCell($rowNumber, $columnNumber);
         $file = $this->getFileWriter();
+
         if (!is_scalar($value) || '' === $value) { //objects, array, empty
             $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'"/>');
         } elseif (is_string($value) && '=' == $value[0]) {
-            $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.Support::xmlSpecialChars($value).'</f></c>');
+            // Support Formula
+            if ('n_function' === $numFormatType) {
+                var_dump('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.
+                    str_replace('{n}', $rowNumber + 1, substr($value, 1))
+                    .'</f></c>');
+
+                $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.
+                    str_replace('{n}', $rowNumber + 1, substr($value, 1))
+                    .'</f></c>');
+            } else {
+                $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.Support::xmlSpecialChars($value).'</f></c>');
+            }
         } else {
             switch ($numFormatType) {
                 case 'n_date':
@@ -161,7 +173,7 @@ EOF
     {
         $this->fileWriter->write('</sheetData>');
 
-        if (!empty($this->merge_cells)) {
+        if (!empty($this->mergeCells)) {
             $this->fileWriter->write('<mergeCells>');
             foreach ($this->mergeCells as $range) {
                 $this->fileWriter->write('<mergeCell ref="'.$range.'"/>');
@@ -169,10 +181,10 @@ EOF
             $this->fileWriter->write('</mergeCells>');
         }
 
-        $max_cell = Support::xlsCell($this->rowCount - 1, count($this->columns) - 1);
+        $maxCell = Support::xlsCell($this->rowCount - 1, count($this->columns) - 1);
 
         if ($this->autoFilter) {
-            $this->fileWriter->write('<autoFilter ref="A1:'.$max_cell.'"/>');
+            $this->fileWriter->write('<autoFilter ref="A1:'.$maxCell.'"/>');
         }
 
         $this->fileWriter->write('<printOptions headings="false" gridLines="false" gridLinesSet="true" horizontalCentered="false" verticalCentered="false"/>');
@@ -184,10 +196,10 @@ EOF
         $this->fileWriter->write('</headerFooter>');
         $this->fileWriter->write('</worksheet>');
 
-        $max_cell_tag = '<dimension ref="A1:'.$max_cell.'"/>';
-        $padding_length = $this->maxCellTagEnd - $this->maxCellTagStart - strlen($max_cell_tag);
+        $maxCellTag = '<dimension ref="A1:'.$maxCell.'"/>';
+        $paddingLength = $this->maxCellTagEnd - $this->maxCellTagStart - strlen($maxCellTag);
         $this->fileWriter->fseek($this->maxCellTagStart);
-        $this->fileWriter->write($max_cell_tag.str_repeat(' ', $padding_length));
+        $this->fileWriter->write($maxCellTag.str_repeat(' ', $paddingLength));
         $this->fileWriter->close();
         $this->finalized = true;
     }
@@ -230,7 +242,7 @@ EOF
     }
 
     /**
-     * @param null|string $fileWriter
+     * @param string|null $fileWriter
      *
      * @return Sheet
      */

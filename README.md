@@ -71,7 +71,51 @@ composer require zhaqq/xlsx
 | 200000 | 2.720s | 2MB    |
 | 250000 | 3.307s | 2MB    |
 
+## usage function
 
+* do it : =A{n}+B{n}
+* make type: function_number
+
+![](example1.png)
+
+![](example2.png)
+
+```php
+
+try {
+    $writer   = new Builder();
+    $fileName = __DIR__ . '/data/xlsx_writer' . date('Ymd-His') . '.xlsx';
+    $writer->buildHeader('sheet_name_1', [
+        'title'   => 'number',
+        'content' => 'number',
+        'weight'  => 'function_number',
+    ]);
+
+    foreach (rows() as $row) {
+        $writer->writeSheetRow($row[0], $row[1]);
+    }
+    times($start);
+
+    $writer->writeToFile($fileName);
+    times($start);
+
+} catch (\Exception $exception) {
+    var_dump($exception->getMessage());
+}
+
+function rows($n = 20)
+{
+    for ($i = 0; $i < $n; $i++) {
+        yield ['sheet_name_1', [
+            $i,
+            $i,
+            '=A{n}+B{n}',
+        ]];
+    }
+}
+
+
+```
 
 ## usage
 
