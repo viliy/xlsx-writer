@@ -68,12 +68,8 @@ class Sheet
         } elseif (is_string($value) && '=' == $value[0]) {
             // Support Formula
             if ('n_function' === $numFormatType) {
-                var_dump('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.
-                    str_replace('{n}', $rowNumber + 1, substr($value, 1))
-                    .'</f></c>');
-
                 $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.
-                    str_replace('{n}', $rowNumber + 1, substr($value, 1))
+                    str_replace('{n}', $rowNumber + 1, substr(Support::xmlSpecialChars($value), 1))
                     .'</f></c>');
             } else {
                 $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.Support::xmlSpecialChars($value).'</f></c>');

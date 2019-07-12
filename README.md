@@ -74,7 +74,7 @@ composer require zhaqq/xlsx
 ## usage function
 
 * do it : =A{n}+B{n}
-* make type: function_number
+* make type: function_number (function+type, function_price, function_float3)
 
 ![](example1.png)
 
