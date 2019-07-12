@@ -22,9 +22,9 @@ return PhpCsFixer\Config::create()
         'include'                                    => true, //include 和文件路径之间需要有一个空格，文件路径不需要用括号括起来；
         'no_trailing_comma_in_list_call'             => true, //删除 list 语句中多余的逗号；
         'no_leading_namespace_whitespace'            => true, //命名空间前面不应该有空格；
-        'binary_operator_spaces'                     => [
-            'default' => 'align_single_space_minimal', //等号对齐、数字箭头符号对齐
-        ],
+//        'binary_operator_spaces'                     => [
+//            'default' => 'align_single_space_minimal', //等号对齐、数字箭头符号对齐
+//        ],
     ])->setFinder(PhpCsFixer\Finder::create()->exclude('vendor')->in([
         __DIR__.'/src',
     ]));

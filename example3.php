@@ -14,7 +14,7 @@ try {
     $writer->buildHeader('sheet_name_1', [
         'title'   => 'number',
         'content' => 'number',
-        'weight'  => 'function_number',
+        'weight'  => 'number',
     ]);
 
     foreach (rows() as $row) {

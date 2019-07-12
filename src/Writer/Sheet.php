@@ -67,13 +67,9 @@ class Sheet
             $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'"/>');
         } elseif (is_string($value) && '=' == $value[0]) {
             // Support Formula
-            if ('n_function' === $numFormatType) {
-                $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.
-                    str_replace('{n}', $rowNumber + 1, substr(Support::xmlSpecialChars($value), 1))
-                    .'</f></c>');
-            } else {
-                $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.Support::xmlSpecialChars($value).'</f></c>');
-            }
+            $file->write('<c r="'.$cellName.'" s="'.$cellStyleIdx.'" t="s"><f>'.
+                str_replace('{n}', $rowNumber + 1, substr(Support::xmlSpecialChars($value), 1))
+                .'</f></c>');
         } else {
             switch ($numFormatType) {
                 case 'n_date':

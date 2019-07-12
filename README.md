@@ -73,8 +73,8 @@ composer require zhaqq/xlsx
 
 ## usage function
 
-* do it : =A{n}+B{n}
-* make type: function_number (function+type, function_price, function_float3)
+* do it : =A{n}+B{n}  or   =A2+B3 
+* make type: number (price, float3)
 
 ![](example1.png)
 
@@ -88,7 +88,7 @@ try {
     $writer->buildHeader('sheet_name_1', [
         'title'   => 'number',
         'content' => 'number',
-        'weight'  => 'function_number',
+        'weight'  => 'number',
     ]);
 
     foreach (rows() as $row) {

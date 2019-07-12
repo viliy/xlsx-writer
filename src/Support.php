@@ -103,9 +103,6 @@ class Support
     {
         $numFormat = preg_replace("/\[(Black|Blue|Cyan|Green|Magenta|Red|White|Yellow)\]/i", '', $numFormat);
 
-        if ($function) {
-            return 'n_function';
-        }
         switch ($numFormat) {
             case 'GENERAL':
                 return 'n_auto';
