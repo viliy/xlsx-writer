@@ -3,6 +3,7 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use Zhaqq\Xlsx\XlsxWriter;
+use Zhaqq\Xlsx\Writer\Builder;
 
 date_default_timezone_set('PRC');
 $start = microtime(true);
@@ -11,7 +12,7 @@ ini_set('memory_limit', '20M');
 times($start);
 
 try {
-    $writer = new \Zhaqq\Xlsx\Writer\Builder();
+    $writer = new Builder();
 
     $fileName = __DIR__ . '/data/xlsx_writer' . date('Ymd-His') . '.xlsx';
     $writer->buildHeader('sheet_name_1', otherHead());

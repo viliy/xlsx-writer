@@ -115,7 +115,7 @@ class Sheet
     {
         $writer = $this->getFileWriter();
         $tabSelected = $isTabSelected ? 'true' : 'false';
-        $maxCell = Support::xlsCell(XlsxWriter::EXCEL_2007_MAX_ROW, XlsxWriter::EXCEL_2007_MAX_COL); //XFE1048577
+        $maxCell = Support::xlsCell(Builder::EXCEL_2007_MAX_ROW, Builder::EXCEL_2007_MAX_COL); //XFE1048577
         $writer->write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'."\n");
         $writer->write(
             <<<'EOF'

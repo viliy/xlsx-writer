@@ -209,9 +209,8 @@ class Builder
         if (empty($sheetName)) {
             return;
         }
-
         $this->initSheet($sheetName);
-        $sheet = $this->getSheet();
+        $sheet = $this->getSheet($sheetName);
         if (count($sheet->columns) < count($row)) {
             $defaultColumnTypes = $this->initColumnsTypes(array_fill($from = 0, count($row), 'GENERAL')); //will map to n_auto
             $sheet->columns = array_merge((array) $sheet->columns, $defaultColumnTypes);
@@ -420,13 +419,13 @@ class Builder
      */
     protected function initSheet(string $sheetName, array $colOptions = [], array $headerTypes = [])
     {
-        if ($this->sheetName == $sheetName || $this->hasSheet($sheetName)) {
+        if ($this->sheetName === $sheetName || $this->hasSheet($sheetName)) {
             return;
         }
         $style = $colOptions;
         $colWidths = isset($colOptions['widths']) ? (array) $colOptions['widths'] : [];
         $this->createSheet($sheetName, $colOptions);
-        $sheet = $this->getSheet();
+        $sheet = $this->getSheet($sheetName);
         $sheet->initContent($colWidths, $this->isTabSelected());
         if (!empty($headerTypes)) {
             $sheet->columns = $this->initColumnsTypes($headerTypes);
@@ -444,6 +443,8 @@ class Builder
             $writer->write('</row>');
             ++$sheet->rowCount;
         }
+
+        $this->sheetName = $sheetName;
     }
 
     protected function initColumnsTypes($headerTypes)
